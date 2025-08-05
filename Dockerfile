@@ -17,13 +17,13 @@ COPY package.json package-lock.json* ./
 # ================================
 FROM base AS builder
 
-# Install all dependencies (including devDependencies for build)
-RUN npm ci --include=dev && npm cache clean --force
+# Install all dependencies (including devDependencies for build) without running prepare
+RUN npm ci --ignore-scripts && npm cache clean --force
 
 # Copy source code (context is minimized by .dockerignore)
 COPY . .
 
-# Build TypeScript to JavaScript
+# Now run build and tests explicitly
 RUN npm run build && npm run test --if-present
 
 # ================================
